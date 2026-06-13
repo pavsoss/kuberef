@@ -19,6 +19,75 @@ It features a Recursive Discovery Engine using PyYAML which parses deep-nested s
 3. **Cross-Platform Docker:** Optimized for zero-install usage on Windows and Linux via advanced volume-mounting and network bridging.
 4. **Automated Distribution:** Full CI/CD pipeline using GitHub Actions and Poetry for automated testing and PyPI publishing.
 
+# Supported Secret Reference Schemas
+
+Kuberef currently audits the following Kubernetes Secret reference patterns when
+scanning manifests. These paths represent the exact schema locations inspected by
+the recursive discovery engine.
+
+## 1. Container Environment Variables (env)
+
+Kuberef extracts Secret references from:
+
+`spec.containers[*].env[*].valueFrom.secretKeyRef.name`
+
+and validates the referenced Secret key from:
+
+`spec.containers[*].env[*].valueFrom.secretKeyRef.key`
+
+Example:
+
+```yaml
+env:
+  - name: DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: database-secret
+        key: password
+```
+
+## 2. Bulk Environment Variables (envFrom)
+
+Kuberef extracts Secret names from:
+
+`spec.containers[*].envFrom[*].secretRef.name`
+
+Example:
+
+```yaml
+envFrom:
+  - secretRef:
+      name: database-secret
+```
+
+## 3. Secret Volumes (volumes)
+
+Kuberef extracts Secret names from:
+
+`spec.volumes[*].secret.secretName`
+
+Example:
+
+```yaml
+volumes:
+  - name: app-secret
+    secret:
+      secretName: database-secret
+```
+
+## 4. Image Pull Credentials (imagePullSecrets)
+
+Kuberef extracts Secret names from:
+
+`spec.imagePullSecrets[*].name`
+
+Example:
+
+```yaml
+imagePullSecrets:
+  - name: dockerhub-secret
+```
+
 # Knowledge Growth & Vision: 
 1. **Python packaging ecosystem:** Poetry, PyPI publishing, and semantic versioning.   
 2. **CI/CD best practices:** GitHub Actions, automated testing, containerization. 
