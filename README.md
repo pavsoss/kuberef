@@ -109,6 +109,17 @@ kuberef <YOUR_FILE>.yaml --namespace <YOUR_NAMESPACE>
 
 ![Audit](https://raw.githubusercontent.com/hudazaan/kuberef/main/docs/images/audit-kuberef.png)
 
+### Watch Mode
+
+Stay running and re-audit automatically whenever a `.yaml` or `.yml` file changes:
+
+```bash
+kuberef deployment.yaml --watch
+kuberef ./k8s-manifests/ -w
+```
+
+Press `Ctrl+C` to stop.
+
 ---
 
 ## Technical Architecture
