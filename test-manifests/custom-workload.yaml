@@ -1,0 +1,47 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: sample-rollout
+spec:
+  template:
+    spec:
+      containers:
+      - name: app
+        env:
+        - name: VALID_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: shared-secret
+              key: valid-key
+        - name: MISSING_KEY_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: shared-secret
+              key: missing-key
+        envFrom:
+        - secretRef:
+            name: existing-env-secret
+      imagePullSecrets:
+      - name: existing-pull-secret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-deployment
+spec:
+  template:
+    spec:
+      containers:
+      - name: app2
+        env:
+        - name: VALID_SECRET_AGAIN
+          valueFrom:
+            secretKeyRef:
+              name: shared-secret
+              key: valid-key
+        - name: MISSING_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: non-existent-secret
+              key: some-key
